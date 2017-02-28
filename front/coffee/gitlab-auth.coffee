@@ -69,13 +69,20 @@ GitLabLoginButtonDirective = ($window, $params, $location, $config, $events, $co
             return if not (type == "gitlab" and code)
             $loader.start(true)
 
-            data = {code: code, token: token}
+            url = document.createElement('a')
+            url.href = $location.absUrl()
+            redirectUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}/login"
+
+            data = {code: code, token: token, redirectUri: redirectUri}
             $auth.login(data, type).then(loginOnSuccess, loginOnError)
 
         loginWithGitLabAccount()
 
         $el.on "click", ".button-auth", (event) ->
-            redirectToUri = $location.absUrl()
+            url = document.createElement('a')
+            url.href = $location.absUrl()
+            redirectToUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}/login"
+
             url = "#{auth_url}/oauth/authorize?client_id=#{clientId}&state=gitlab&response_type=code&scope=api%20read_user&redirect_uri=#{redirectToUri}"
             $window.location.href = url
 

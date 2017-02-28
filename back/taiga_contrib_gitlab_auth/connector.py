@@ -39,7 +39,6 @@ CLIENT_ID = getattr(settings, "GITLAB_API_CLIENT_ID", None)
 CLIENT_SECRET = getattr(settings, "GITLAB_API_CLIENT_SECRET", None)
 
 URL = getattr(settings, "GITLAB_URL", None)
-REDIRECT_URI = getattr(settings, "REDIRECT_URI", None)
 
 API_RESOURCES_URLS = {
     "login": {
@@ -106,7 +105,7 @@ def _post(url:str, params:dict, headers:dict) -> dict:
 ## Simple calls
 ######################################################
 
-def login(access_code:str, client_id:str=CLIENT_ID, client_secret:str=CLIENT_SECRET, redirect_uri:str=REDIRECT_URI,
+def login(access_code:str, redirect_uri:str, client_id:str=CLIENT_ID, client_secret:str=CLIENT_SECRET,
           headers:dict=HEADERS):
     """
     Get access_token fron an user authorized code, the client id and the client secret key.
@@ -122,7 +121,7 @@ def login(access_code:str, client_id:str=CLIENT_ID, client_secret:str=CLIENT_SEC
             "client_secret": client_secret,
             "code": access_code,
             "grant_type": "authorization_code",
-            "redirect_uri": "{}?next=%2Fdiscover".format(redirect_uri)}
+            "redirect_uri": redirect_uri}
     data = _post(url, params=params, headers=headers)
     return AuthInfo(access_token=data.get("access_token", None))
 
@@ -145,11 +144,11 @@ def get_user_profile(headers:dict=HEADERS):
 ## Convined calls
 ######################################################
 
-def me(access_code:str) -> tuple:
+def me(access_code:str, redirectUri:str) -> tuple:
     """
     Connect to a gitlab account and get all personal info (profile and the primary email).
     """
-    auth_info = login(access_code)
+    auth_info = login(access_code, redirectUri)
 
     headers = HEADERS.copy()
     headers["Authorization"] = "Bearer {}".format(auth_info.access_token)

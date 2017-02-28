@@ -79,8 +79,9 @@ def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:s
 def gitlab_login_func(request):
     code = request.DATA.get('code', None)
     token = request.DATA.get('token', None)
+    redirectUri = request.DATA.get('redirectUri', None)
 
-    email, user_info = connector.me(code)
+    email, user_info = connector.me(code, redirectUri)
 
     user = gitlab_register(username=user_info.username,
                            email=email,
