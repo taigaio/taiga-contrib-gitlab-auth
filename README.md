@@ -1,10 +1,10 @@
 Taiga contrib gitlab auth
 =========================
 
-Ported from official github auth.
+Ported from official gitlab auth.
 
-![Kaleidos Project](http://kaleidos.net/static/img/badge.png "Kaleidos Project")
-[![Managed with Taiga.io](https://taiga.io/media/support/attachments/article-22/banner-gh.png)](https://taiga.io "Managed with Taiga.io")
+![Kaleidos Project](http://kaleidos.net/static/img/badge.svg "Kaleidos Project")
+[![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
 
 The Taiga plugin for gitlab authentication.
 
@@ -14,7 +14,7 @@ Installation
 
 #### Taiga Back
 
-In your Taiga back python virtualenv install the pip package `taiga-contrib-github-auth` with:
+In your Taiga back python virtualenv install the pip package `taiga-contrib-gitlab-auth` with:
 
 ```bash
   pip install taiga-contrib-gitlab-auth
@@ -29,7 +29,6 @@ Modify your `settings/local.py` and include the line:
   GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
-  REDIRECT_URI="YOUR-TAIGA-URL/login"
 ```
 
 #### Taiga Front
@@ -77,7 +76,6 @@ Modify `taiga-back/settings/local.py` and include the line:
   GITHUB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITHUB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
-  REDIRECT_URI="YOUR-TAIGA-URL/login"
 
 ```
 
