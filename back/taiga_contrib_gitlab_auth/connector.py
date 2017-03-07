@@ -108,8 +108,8 @@ def _post(url:str, params:dict, headers:dict) -> dict:
 def login(access_code:str, redirect_uri:str, client_id:str=CLIENT_ID, client_secret:str=CLIENT_SECRET,
           headers:dict=HEADERS):
     """
-    Get access_token fron an user authorized code, the client id and the client secret key.
-    (See https://developer.github.com/v3/oauth/#web-application-flow).
+    Get access_token from an user authorized code, the client id and the client secret key.
+    (See https://docs.gitlab.com/ce/api/oauth2.html).
     """
     if not CLIENT_ID or not CLIENT_SECRET:
         raise GitLabApiError({"error_message": _("Login with gitlab account is disabled. Contact "

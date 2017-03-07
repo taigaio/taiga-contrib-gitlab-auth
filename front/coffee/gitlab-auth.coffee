@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-# File: github-auth.coffee
+# File: gitlab-auth.coffee
 ###
 
 GitLabLoginButtonDirective = ($window, $params, $location, $config, $events, $confirm,
