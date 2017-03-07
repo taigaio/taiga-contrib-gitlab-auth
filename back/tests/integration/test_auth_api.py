@@ -40,6 +40,7 @@ def test_response_200_in_registration_with_gitlab_account(client, settings):
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)
@@ -56,15 +57,14 @@ def test_response_200_in_registration_with_gitlab_account_and_existed_user_by_em
     settings.PUBLIC_REGISTER_ENABLED = False
     form = {"type": "gitlab",
             "code": "xxxxxx"}
-    user = factories.UserFactory()
-    user.email = "mmcfly@bttf.com"
-    user.save()
+    user = factories.UserFactory.create(email="mmcfly@bttf.com")
 
     with patch("taiga_contrib_gitlab_auth.connector.me") as m_me:
         m_me.return_value = ("mmcfly@bttf.com",
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)
@@ -91,6 +91,7 @@ def test_response_200_in_registration_with_gitlab_account_and_existed_user_by_gi
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)
@@ -117,6 +118,7 @@ def test_response_200_in_registration_with_gitlab_account_and_change_gitlab_user
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)
@@ -142,6 +144,7 @@ def test_response_200_in_registration_with_gitlab_account_in_a_project(client, s
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)
@@ -160,6 +163,7 @@ def test_response_404_in_registration_with_gitlab_in_a_project_with_invalid_toke
                              gitlab_connector.User(id=1955,
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
+                                                   email="mmcfly@bttf.com",
                                                    bio="time traveler"))
 
         response = client.post(reverse("auth-list"), form)

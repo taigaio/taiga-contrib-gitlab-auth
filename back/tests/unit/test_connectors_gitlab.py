@@ -22,14 +22,13 @@ from taiga_contrib_gitlab_auth import connector as gitlab
 
 
 def test_url_builder():
-    assert (gitlab._build_url("login", "authorize") ==
-            "https://api.github.com/login/oauth/authorize")
-    assert (gitlab._build_url("login","access-token") ==
-            "https://api.github.com/login/oauth/access_token")
-    assert (gitlab._build_url("user", "profile") ==
-            "https://api.github.com/user")
-    assert (gitlab._build_url("user", "emails") ==
-            "https://api.github.com/user/emails")
+    with patch("taiga_contrib_gitlab_auth.connector.URL", "http://localhost:4321"):
+        assert (gitlab._build_url("login", "authorize") ==
+                "http://localhost:4321/oauth/authorize")
+        assert (gitlab._build_url("login", "access-token") ==
+                "http://localhost:4321/oauth/token")
+        assert (gitlab._build_url("user", "profile") ==
+                "http://localhost:4321/api/v3/user")
 
 
 def test_login_without_settings_params():
@@ -46,48 +45,50 @@ def test_login_without_settings_params():
 
 def test_login_success():
     with patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests, \
-            patch("taiga_contrib_gitlab_auth.connector.CLIENT_ID") as CLIENT_ID, \
-            patch("taiga_contrib_gitlab_auth.connector.CLIENT_SECRET") as CLIENT_SECRET:
-        CLIENT_ID = "*CLIENT_ID*"
-        CLIENT_SECRET = "*CLIENT_SECRET*"
+            patch("taiga_contrib_gitlab_auth.connector.URL", "http://localhost:4321"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_ID", "*CLIENT_ID*"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_SECRET", "*CLIENT_SECRET*"):
         m_requests.post.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"access_token": "xxxxxxxx"}
 
-        auth_info = gitlab.login("*access-code*", "**client-id**", "*client-secret*", gitlab.HEADERS)
+        auth_info = gitlab.login("*access-code*", "http://localhost:1234", "**client-id**", "*client-secret*", gitlab.HEADERS)
 
         assert auth_info.access_token == "xxxxxxxx"
-        m_requests.post.assert_called_once_with("https://github.com/login/oauth/access_token",
-                                                headers=github.HEADERS,
+        m_requests.post.assert_called_once_with("http://localhost:4321/oauth/token",
+                                                headers=gitlab.HEADERS,
                                                 params={'code': '*access-code*',
-                                                        'scope': 'user:emails',
                                                         'client_id': '**client-id**',
-                                                        'client_secret': '*client-secret*'})
+                                                        'client_secret': '*client-secret*',
+                                                        'grant_type': 'authorization_code',
+                                                        'redirect_uri': 'http://localhost:1234'})
 
 
 def test_login_whit_errors():
     with pytest.raises(gitlab.GitLabApiError) as e, \
             patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests, \
-            patch("taiga_contrib_gitlab_auth.connector.CLIENT_ID") as CLIENT_ID, \
-            patch("taiga_contrib_gitlab_auth.connector.CLIENT_SECRET") as CLIENT_SECRET:
-        CLIENT_ID = "*CLIENT_ID*"
-        CLIENT_SECRET = "*CLIENT_SECRET*"
+            patch("taiga_contrib_gitlab_auth.connector.URL", "http://localhost:4321"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_ID", "*CLIENT_ID*"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_SECRET", "*CLIENT_SECRET*"):
         m_requests.post.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"error": "Invalid credentials"}
 
-        auth_info = gitlab.login("*access-code*", "**client-id**", "*ient-secret*", gitlab.HEADERS)
+        gitlab.login("*access-code*", "**client-id**", "*ient-secret*", gitlab.HEADERS)
     assert e.value.status_code == 400
     assert e.value.detail["status_code"] == 200
     assert e.value.detail["error"] == "Invalid credentials"
 
 
 def test_get_user_profile_success():
-    with patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests:
+    with patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests, \
+            patch("taiga_contrib_gitlab_auth.connector.URL", "http://localhost:4321"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_ID", "*CLIENT_ID*"), \
+            patch("taiga_contrib_gitlab_auth.connector.CLIENT_SECRET", "*CLIENT_SECRET*"):
         m_requests.get.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"id": 1955,
-                                        "login": "mmcfly",
+                                        "username": "mmcfly",
                                         "name": "martin seamus mcfly",
                                         "bio": "time traveler"}
 
@@ -97,7 +98,7 @@ def test_get_user_profile_success():
         assert user_profile.username == "mmcfly"
         assert user_profile.full_name == "martin seamus mcfly"
         assert user_profile.bio == "time traveler"
-        m_requests.get.assert_called_once_with("https://api.github.com/user",
+        m_requests.get.assert_called_once_with("http://localhost:4321/api/v3/user",
                                                headers=gitlab.HEADERS)
 
 
@@ -108,38 +109,7 @@ def test_get_user_profile_whit_errors():
         m_response.status_code = 401
         m_response.json.return_value = {"error": "Invalid credentials"}
 
-        auth_info = gitlab.get_user_profile(gitlab.HEADERS)
-    assert e.value.status_code == 400
-    assert e.value.detail["status_code"] == 401
-    assert e.value.detail["error"] == "Invalid credentials"
-
-
-def test_get_user_emails_success():
-    with patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests:
-        m_requests.get.return_value = m_response = Mock()
-        m_response.status_code = 200
-        m_response.json.return_value = [{"email": "darth-vader@bttf.com", "primary": False},
-                                        {"email": "mmcfly@bttf.com", "primary": True}]
-
-        emails = gitlab.get_user_emails(gitlab.HEADERS)
-
-        assert len(emails) == 2
-        assert emails[0].email == "darth-vader@bttf.com"
-        assert not emails[0].is_primary
-        assert emails[1].email == "mmcfly@bttf.com"
-        assert emails[1].is_primary
-        m_requests.get.assert_called_once_with("https://api.github.com/user/emails",
-                                               headers=gitlab.HEADERS)
-
-
-def test_get_user_emails_whit_errors():
-    with pytest.raises(gitlab.GitLabApiError) as e, \
-            patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests:
-        m_requests.get.return_value = m_response = Mock()
-        m_response.status_code = 401
-        m_response.json.return_value = {"error": "Invalid credentials"}
-
-        emails = gitlab.get_user_emails(gitlab.HEADERS)
+        gitlab.get_user_profile(gitlab.HEADERS)
     assert e.value.status_code == 400
     assert e.value.detail["status_code"] == 401
     assert e.value.detail["error"] == "Invalid credentials"
@@ -147,17 +117,14 @@ def test_get_user_emails_whit_errors():
 
 def test_me():
     with patch("taiga_contrib_gitlab_auth.connector.login") as m_login, \
-            patch("taiga_contrib_gitlab_auth.connector.get_user_profile") as m_get_user_profile, \
-            patch("taiga_contrib_gitlab_auth.connector.get_user_emails") as m_get_user_emails:
+            patch("taiga_contrib_gitlab_auth.connector.get_user_profile") as m_get_user_profile:
         m_login.return_value = gitlab.AuthInfo(access_token="xxxxxxxx")
         m_get_user_profile.return_value = gitlab.User(id=1955,
                                                       username="mmcfly",
                                                       full_name="martin seamus mcfly",
+                                                      email="mmcfly@bttf.com",
                                                       bio="time traveler")
-        m_get_user_emails.return_value = [gitlab.Email(email="darth-vader@bttf.com", is_primary=False),
-                                          gitlab.Email(email="mmcfly@bttf.com", is_primary=True)]
-
-        email, user = gitlab.me("**access-code**")
+        email, user = gitlab.me("**access-code**", "http://localhost:1234")
 
         assert email == "mmcfly@bttf.com"
         assert user.id == 1955
@@ -166,6 +133,5 @@ def test_me():
         assert user.bio == "time traveler"
 
         headers = gitlab.HEADERS.copy()
-        headers["Authorization"] = "token xxxxxxxx"
+        headers["Authorization"] = "Bearer xxxxxxxx"
         m_get_user_profile.assert_called_once_with(headers=headers)
-        m_get_user_emails.assert_called_once_with(headers=headers)
