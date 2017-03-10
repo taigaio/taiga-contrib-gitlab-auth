@@ -5,7 +5,7 @@ import versiontools_support
 from setuptools import setup, find_packages
 
 setup(
-    name = 'taiga-contrib-gitlab-auth',
+    name = 'taiga-contrib-gitlab-auth-official',
     version = ":versiontools:taiga_contrib_gitlab_auth:",
     description = "The Taiga plugin for gitlab authentication",
     long_description = "",

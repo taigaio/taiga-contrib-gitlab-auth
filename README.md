@@ -12,10 +12,10 @@ Installation
 
 #### Taiga Back
 
-In your Taiga back python virtualenv install the pip package `taiga-contrib-gitlab-auth` with:
+In your Taiga back python virtualenv install the pip package `taiga-contrib-gitlab-auth-official` with:
 
 ```bash
-  pip install taiga-contrib-gitlab-auth
+  pip install taiga-contrib-gitlab-auth-official
 ```
 
 Modify your `settings/local.py` and include the line:
@@ -37,7 +37,7 @@ Download in your `dist/plugins/` directory of Taiga front the `taiga-contrib-git
   cd dist/
   mkdir -p plugins
   cd plugins
-  svn export "https://github.com/taigaio/taiga-contrib-gitlab-auth/tags/$(pip show taiga-contrib-gitlab-auth | awk '/^Version: /{print $2}')/front/dist"  "gitlab-auth"
+  svn export "https://github.com/taigaio/taiga-contrib-gitlab-auth/tags/$(pip show taiga-contrib-gitlab-auth-official | awk '/^Version: /{print $2}')/front/dist"  "gitlab-auth"
 ```
 
 Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
