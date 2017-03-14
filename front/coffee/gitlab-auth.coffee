@@ -83,7 +83,7 @@ GitLabLoginButtonDirective = ($window, $params, $location, $config, $events, $co
             url.href = $location.absUrl()
             redirectToUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}/login"
 
-            url = "#{auth_url}/oauth/authorize?client_id=#{clientId}&state=gitlab&response_type=code&scope=api%20read_user&redirect_uri=#{redirectToUri}"
+            url = "#{auth_url}/oauth/authorize?client_id=#{clientId}&state=gitlab&response_type=code&scope=read_user&redirect_uri=#{redirectToUri}"
             $window.location.href = url
 
         $scope.$on "$destroy", ->

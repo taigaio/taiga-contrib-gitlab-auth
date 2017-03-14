@@ -85,7 +85,7 @@ After clone the repo link `dist` in `taiga-front` plugins directory:
   cd taiga-front/dist
   mkdir -p plugins
   cd plugins
-  ln -s ../../../taiga-contrib-gitlab-auth/dist gitlab-auth
+  ln -s ../../../taiga-contrib-gitlab-auth/front/dist gitlab-auth
 ```
 
 Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
@@ -122,4 +122,3 @@ PYTHONPATH environment variable, and run py.test, for example:
   add2virtualenv /home/taiga/taiga-back/
   py.test
 ```
-
