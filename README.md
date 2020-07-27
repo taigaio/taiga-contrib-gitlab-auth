@@ -71,8 +71,8 @@ Modify `taiga-back/settings/local.py` and include the line:
   INSTALLED_APPS += ["taiga_contrib_gitlab_auth"]
 
   # Get these from Admin -> Applications
-  GITHUB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
-  GITHUB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
+  GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
+  GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
 
 ```
