@@ -1,5 +1,8 @@
 # Changelog #
 
+## 6.0.0
+
+Compatible with Taiga 6.0.0
 
 ## 3.1.1 (2017-03-14)
 - Fix a problem with a malformed gitlab call url
