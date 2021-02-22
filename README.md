@@ -8,15 +8,27 @@ The Taiga plugin for gitlab authentication (Ported from official gitlab auth).
 
 ## Production env
 
-### Taiga Back
+Take the latest release of this repository, for instance:
 
-In your Taiga back python virtualenv install the pip package `taiga-contrib-gitlab-auth-official` with:
-
-```bash
-  pip install taiga-contrib-gitlab-auth-official
+```
+export TAIGA_CONTRIB_GITLAB_AUTH_TAG=6.0.0
 ```
 
-Modify your `settings/local.py` and include the line:
+### Taiga Back
+
+Load the python virtualenv from your Taiga back directory:
+
+```bash
+source .venv/bin/activate
+```
+
+And install the package `taiga-contrib-gitlab-auth-official` with:
+
+```bash
+  (taiga-back) pip install "git+https://github.com/taigaio/taiga-contrib-gitlab-auth.git@${TAIGA_CONTRIB_GITLAB_AUTH_TAG}#egg=taiga-contrib-gitlab-auth-official&subdirectory=back"
+```
+
+Modify your `settings/config.py` and include the line:
 
 ```python
   INSTALLED_APPS += ["taiga_contrib_gitlab_auth"]
@@ -27,6 +39,9 @@ Modify your `settings/local.py` and include the line:
   GITLAB_URL="YOUR-GITLAB-URL"
 ```
 
+**Tip** the callback url in the Gitlab configuration should be the same as the `TAIGA_URL` environment variable.
+
+
 ### Taiga Front
 
 Download in your `dist/plugins/` directory of Taiga front the `taiga-contrib-gitlab-auth` compiled code (you need subversion in your system):
@@ -35,23 +50,25 @@ Download in your `dist/plugins/` directory of Taiga front the `taiga-contrib-git
   cd dist/
   mkdir -p plugins
   cd plugins
-  svn export "https://github.com/taigaio/taiga-contrib-gitlab-auth/tags/$(pip show taiga-contrib-gitlab-auth-official | awk '/^Version: /{print $2}')/front/dist"  "gitlab-auth"
+  svn export "https://github.com/taigaio/taiga-contrib-gitlab-auth/tags/${TAIGA_CONTRIB_GITLAB_AUTH_TAG}/front/dist"  "gitlab-auth"
 ```
 
 Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
 
 ```json
 ...
-    "gitLabClientId": "YOUR-GITLAB-CLIENT-ID",
-    "gitLabUrl": "YOUR-GITLAB-URL",
-    "contribPlugins": [
-        (...)
-        "/plugins/gitlab-auth/gitlab-auth.json"
-    ]
+"gitLabClientId": "YOUR-GITLAB-CLIENT-ID",
+"gitLabUrl": "YOUR-GITLAB-URL",
+"contribPlugins": [
+  (...)
+  "/plugins/gitlab-auth/gitlab-auth.json"
+]
 ...
 ```
 
 ## Dev env
+
+This configuration should be used only if you're developing this library.
 
 ### Taiga Back
 
