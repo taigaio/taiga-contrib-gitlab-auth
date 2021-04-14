@@ -14,7 +14,7 @@
     "plugin"
   ],
   "author": "Jesús Espino <jesus.espino@kaleidos.net>",
-  "license": "MIT-0",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/taigaio/taiga-contrib-gitlab-auth/issues"
   },
