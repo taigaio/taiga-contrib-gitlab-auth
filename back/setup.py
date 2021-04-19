@@ -17,7 +17,7 @@ setup(
     keywords = 'taiga, gitlab, auth, plugin',
     author = 'Jesús Espino García',
     author_email = 'jesus.espino@kaleidos.net',
-    url = 'https://github.com/taigaio/taiga-contrib-gitlab-auth',
+    url = 'https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth',
     license = 'MPL 2.0',
     include_package_data = True,
     packages = find_packages(),

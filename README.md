@@ -1,7 +1,6 @@
 Taiga contrib gitlab auth
 =========================
 
-[![Kaleidos Project](http://kaleidos.net/static/img/badge.png)](https://github.com/kaleidos "Kaleidos Project")
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
 
 The Taiga plugin for gitlab authentication (Ported from official gitlab auth).
@@ -25,7 +24,7 @@ source .venv/bin/activate
 And install the package `taiga-contrib-gitlab-auth-official` with:
 
 ```bash
-  (taiga-back) pip install "git+https://github.com/taigaio/taiga-contrib-gitlab-auth.git@${TAIGA_CONTRIB_GITLAB_AUTH_TAG}#egg=taiga-contrib-gitlab-auth-official&subdirectory=back"
+  (taiga-back) pip install "git+https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth.git@${TAIGA_CONTRIB_GITLAB_AUTH_TAG}#egg=taiga-contrib-gitlab-auth-official&subdirectory=back"
 ```
 
 Modify your `settings/config.py` and include the line:
@@ -50,7 +49,7 @@ Download in your `dist/plugins/` directory of Taiga front the `taiga-contrib-git
   cd dist/
   mkdir -p plugins
   cd plugins
-  svn export "https://github.com/taigaio/taiga-contrib-gitlab-auth/tags/${TAIGA_CONTRIB_GITLAB_AUTH_TAG}/front/dist"  "gitlab-auth"
+  svn export "https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/tags/${TAIGA_CONTRIB_GITLAB_AUTH_TAG}/front/dist"  "gitlab-auth"
 ```
 
 Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
@@ -150,7 +149,7 @@ Currently, we have authored three main documentation hubs:
 If you **find a bug** in Taiga you can always report it:
 
 - in [Taiga issues](https://tree.taiga.io/project/taiga/issues). **This is the preferred way**
-- in [Github issues](https://github.com/taigaio/taiga-contrib-gitlab-auth/issues)
+- in [Github issues](https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/issues)
 - send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io)
 - send us a mail to security@taiga.io if is a **security bug**
 
@@ -176,4 +175,4 @@ Help us keep the Taiga Community open and inclusive. Please read and follow our 
 
 Every code patch accepted in Taiga codebase is licensed under [MPL 2.0](LICENSE). You must be careful to not include any code that can not be licensed under this license.
 
-Please read carefully [our license](LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/taigaio/taiga-contrib-gitlab-auth/blob/master/CONTRIBUTING.md).
+Please read carefully [our license](LICENSE) and ask us if you have any questions as well as the [Contribution policy](https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/blob/main/CONTRIBUTING.md).
