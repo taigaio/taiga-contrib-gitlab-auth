@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41E Bug report"
 about: Create a report to help us improve
-title: '[BUG]'
+title: '[BUG] '
 labels: bug
 assignees: ''
 ---
@@ -9,11 +9,6 @@ assignees: ''
   Please, make sure to look through existing issues(https://tree.taiga.io/project/taiga/issues) to see whether your bug has already been submitted.
   Describe the bug with as much detail as possible to make it easier for us to fix it. If you share any configuration, please, ensure you redact all your credentials.
   -->
-
-**Choose one**
-- [ ] I cannot work with Taiga and I don’t have any workaround
-- [ ] It’s difficult to work with Taiga and I don’t have any workaround
-- [ ] It’s difficult to work with Taiga but I have a workaround
 
 **Describe the bug**
 <!--
@@ -23,6 +18,11 @@ assignees: ''
 **How can we reproduce the behavior**
 <!--
   Detailed steps to reproduce the behavior.
+-->
+
+**Workarounds**
+<!--
+  Please, tell us if you can still work with Taiga and if you found a workaround for it.
 -->
 
 **Screenshots**
