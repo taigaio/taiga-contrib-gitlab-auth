@@ -1,7 +1,7 @@
 ---
 name: "\U00002753 Support Question"
 about: Request help setting up your Taiga instance
-title: '[Q]'
+title: '[Q] '
 labels: question
 assignees: ''
 ---
