@@ -1,7 +1,7 @@
 Relocation warning
 ==================
 
-This repository has been relocated to [a new organization](https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/) where the Taiga team will continue the development. Please, follow us and contribute on the new location. New issues should be placed as well in the new organization.
+This repository has been relocated to [a the new organizatoin Kaleidos Ventures](https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/) where the team will continue developing Taiga. Please, follow us and contribute on the new location. New issues should be placed as well in the new organization.
 
 We haven't archived this repository yet because we want to keep the currently open issues, but eventually it'll be inactive and will be archived.
 
