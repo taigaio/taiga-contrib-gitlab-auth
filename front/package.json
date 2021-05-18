@@ -1,6 +1,6 @@
 {
   "name": "taiga-contrib-gitlab-auth",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Taiga contrib plugin for gitlab authentication",
   "main": "index.js",
   "repository": {
