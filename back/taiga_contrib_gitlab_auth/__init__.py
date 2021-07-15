@@ -5,6 +5,6 @@
 #
 # Copyright (c) 2021-present Kaleidos Ventures SL
 
-__version__ = (6, 2, 1)
+__version__ = (6, 2, 2)
 
 default_app_config = "taiga_contrib_gitlab_auth.apps.TaigaContribGitlabAuthAppConfig"
