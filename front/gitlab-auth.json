@@ -5,5 +5,5 @@
     "type": "auth",
     "module": "taigaContrib.gitlabAuth",
     "template": "/plugins/gitlab-auth/gitlab-auth.html",
-    "js": "/plugins/gitlab-auth/gitlab-auth.js"
+    "js": "plugins/gitlab-auth/gitlab-auth.js"
 }

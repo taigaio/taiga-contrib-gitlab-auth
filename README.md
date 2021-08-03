@@ -38,7 +38,7 @@ Modify your `settings/config.py` and include the line:
   GITLAB_URL="YOUR-GITLAB-URL"
 ```
 
-**Tip** the callback url in the Gitlab configuration should be the same as the `TAIGA_URL` environment variable.
+**Tip** the callback url in the Gitlab configuration should be the same as the `{TAIGA_URL}/login` environment variable.
 
 
 ### Taiga Front
@@ -52,7 +52,7 @@ Download in your `dist/plugins/` directory of Taiga front the `taiga-contrib-git
   svn export "https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/tags/${TAIGA_CONTRIB_GITLAB_AUTH_TAG}/front/dist"  "gitlab-auth"
 ```
 
-Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
+Include in your `dist/conf.json` in the 'contribPlugins' list the value `"plugins/gitlab-auth/gitlab-auth.json"`:
 
 ```json
 ...
@@ -60,7 +60,7 @@ Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugi
 "gitLabUrl": "YOUR-GITLAB-URL",
 "contribPlugins": [
   (...)
-  "/plugins/gitlab-auth/gitlab-auth.json"
+  "plugins/gitlab-auth/gitlab-auth.json"
 ]
 ...
 ```
@@ -102,7 +102,7 @@ After clone the repo link `dist` in `taiga-front` plugins directory:
   ln -s ../../../taiga-contrib-gitlab-auth/front/dist gitlab-auth
 ```
 
-Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugins/gitlab-auth/gitlab-auth.json"`:
+Include in your `dist/conf.json` in the 'contribPlugins' list the value `"plugins/gitlab-auth/gitlab-auth.json"`:
 
 ```json
 ...
@@ -110,7 +110,7 @@ Include in your `dist/conf.json` in the 'contribPlugins' list the value `"/plugi
     "gitLabUrl": "YOUR-GITLAB-URL",
     "contribPlugins": [
         (...)
-        "/plugins/gitlab-auth/gitlab-auth.json"
+        "plugins/gitlab-auth/gitlab-auth.json"
     ]
 ...
 ```
