@@ -55,7 +55,7 @@ GitLabLoginButtonDirective = ($window, $params, $location, $config, $events, $co
 
             url = document.createElement('a')
             url.href = $location.absUrl()
-            redirectUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}/login"
+            redirectUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}#{window.taigaConfig.baseHref}login"
 
             data = {code: code, token: token, redirectUri: redirectUri}
             $auth.login(data, type).then(loginOnSuccess, loginOnError)
@@ -65,7 +65,7 @@ GitLabLoginButtonDirective = ($window, $params, $location, $config, $events, $co
         $el.on "click", ".button-auth", (event) ->
             url = document.createElement('a')
             url.href = $location.absUrl()
-            redirectToUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}/login"
+            redirectToUri = "#{url.protocol}//#{url.hostname}#{if url.port == '' then '' else ':'+url.port}#{window.taigaConfig.baseHref}login"
 
             url = "#{auth_url}/oauth/authorize?client_id=#{clientId}&state=gitlab&response_type=code&scope=read_user&redirect_uri=#{redirectToUri}"
             $window.location.href = url
