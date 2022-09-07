@@ -1,5 +1,4 @@
-Taiga contrib gitlab auth
-=========================
+# Taiga contrib gitlab auth
 
 &gt; **READ THIS FIRST!**: We recently announced Taiga plans for the future and they greatly affect how we manage this repository and the current Taiga 6 release. Check it [here](https://blog.taiga.io/announcing_taiganext.html).
 
@@ -41,7 +40,6 @@ Modify your `settings/config.py` and include the line:
 ```
 
 **Tip** the callback url in the Gitlab configuration should be the same as the `{TAIGA_URL}/login` environment variable.
-
 
 ### Taiga Front
 
@@ -122,6 +120,7 @@ In the plugin source dir `taiga-contrib-gitlab-auth/front` run
 ```bash
 npm install
 ```
+
 and use:
 
 - `gulp` to regenerate the source and watch for changes.
@@ -167,7 +166,7 @@ If you want to be up to date about announcements of releases, important changes 
 
 ## Contribute to Taiga
 
-There are many different ways to contribute to Taiga's platform, from patches, to documentation and UI enhancements, just find the one that best fits with your skills. Check out our detailed [contribution guide](https://resources.taiga.io/extend/how-can-i-contribute/)
+There are many different ways to contribute to Taiga's platform, from patches, to documentation and UI enhancements, just find the one that best fits with your skills. Check out our detailed [contribution guide](https://community.taiga.io/t/how-can-i-contribute/159#code-patches-enhacements-3).
 
 ## Code of Conduct
 
