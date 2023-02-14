@@ -7,7 +7,7 @@
 
 from django.db import transaction as tx
 from django.db import IntegrityError
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from django.apps import apps
 
