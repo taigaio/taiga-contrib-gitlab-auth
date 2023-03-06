@@ -1,6 +1,10 @@
 # Changelog #
 
-## 6.6.0 (Unreleased)
+## 6.6.1 (Unreleased)
+
+- ...
+
+## 6.6.0 (2022-03-06)
 
 - Upgrade to Django 3.2
 - Compatible with Taiga 6.6.0
