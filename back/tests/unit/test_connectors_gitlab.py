@@ -18,7 +18,7 @@ def test_url_builder():
         assert (gitlab._build_url("login", "access-token") ==
                 "http://localhost:4321/oauth/token")
         assert (gitlab._build_url("user", "profile") ==
-                "http://localhost:4321/api/v3/user")
+                "http://localhost:4321/api/v4/user")
 
 
 def test_login_without_settings_params():
@@ -88,7 +88,7 @@ def test_get_user_profile_success():
         assert user_profile.username == "mmcfly"
         assert user_profile.full_name == "martin seamus mcfly"
         assert user_profile.bio == "time traveler"
-        m_requests.get.assert_called_once_with("http://localhost:4321/api/v3/user",
+        m_requests.get.assert_called_once_with("http://localhost:4321/api/v4/user",
                                                headers=gitlab.HEADERS)
 
 

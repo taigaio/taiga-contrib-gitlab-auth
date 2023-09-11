@@ -36,7 +36,7 @@ API_RESOURCES_URLS = {
         "access-token": "oauth/token"
     },
     "user": {
-        "profile": "api/v3/user",
+        "profile": "api/v4/user",
     }
 }
 
