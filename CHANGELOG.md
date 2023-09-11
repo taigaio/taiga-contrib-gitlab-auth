@@ -2,7 +2,7 @@
 
 ## 6.7.1 (Unreleased)
 
-- ...
+- Use GitLab API v4
 
 ## 6.7.0 (2023-06-12)
 
