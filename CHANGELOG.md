@@ -1,6 +1,10 @@
 # Changelog #
 
-## 6.7.1 (Unreleased)
+## 6.7.2 (Unreleased)
+
+- ...
+
+## 6.7.1 (2023-09-20)
 
 - Use GitLab API v4
 
