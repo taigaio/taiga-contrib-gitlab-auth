@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth"
+    "url": "https://github.com/taigaio/taiga-contrib-gitlab-auth"
   },
   "keywords": [
     "gitlab",
@@ -16,9 +16,9 @@
   "author": "Jesús Espino <jesus.espino@kaleidos.net>",
   "license": "MPL-2",
   "bugs": {
-    "url": "https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth/issues"
+    "url": "https://github.com/taigaio/taiga-contrib-gitlab-auth/issues"
   },
-  "homepage": "https://github.com/kaleidos-ventures/taiga-contrib-gitlab-auth",
+  "homepage": "https://github.com/taigaio/taiga-contrib-gitlab-auth",
   "dependencies": {
     "coffee-script": "^1.8.0",
     "jade": "^1.9.1"
