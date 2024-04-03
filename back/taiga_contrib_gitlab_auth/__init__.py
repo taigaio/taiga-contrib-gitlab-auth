@@ -5,5 +5,5 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
-__version__ = (6, 7, 1)
+__version__ = (6, 8, 0)
 
