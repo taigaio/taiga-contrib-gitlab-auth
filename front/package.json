@@ -1,6 +1,6 @@
 {
   "name": "taiga-contrib-gitlab-auth",
-  "version": "6.9.0",
+  "version": "6.10.0",
   "description": "Taiga contrib plugin for gitlab authentication",
   "main": "index.js",
   "repository": {
@@ -13,7 +13,7 @@
     "authentication",
     "plugin"
   ],
-  "author": "Jesús Espino <jesus.espino@kaleidos.net>",
+  "author": "Jes\u00fas Espino <jesus.espino@kaleidos.net>",
   "license": "MPL-2",
   "bugs": {
     "url": "https://github.com/taigaio/taiga-contrib-gitlab-auth/issues"
