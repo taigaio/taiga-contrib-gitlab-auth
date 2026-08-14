@@ -19,3 +19,6 @@ INSTALLED_APPS = INSTALLED_APPS + [
     "taiga_contrib_gitlab_auth",
 ]
 INSTALLED_APPS = list(set(INSTALLED_APPS) - set(["taiga.hooks.github", "taiga.hooks.gitlab", "taiga.hooks.bitbucket"]))
+
+GITLAB_URL = "https://gitlab.com"
+GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = []

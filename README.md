@@ -37,6 +37,8 @@ Modify your `settings/config.py` and include the line:
   GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
+  # GitLab SaaS is always allowed. Self-Managed instances require explicit opt-in.
+  GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = []
 ```
 
 **Tip** the callback url in the Gitlab configuration should be the same as the `{TAIGA_URL}/login` environment variable.
@@ -88,8 +90,30 @@ Modify `taiga-back/settings/local.py` and include the line:
   GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
+  GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = []
 
 ```
+
+GitLab SaaS (`https://gitlab.com`) is always allowed. Self-Managed GitLab
+instances are rejected unless explicitly included in
+`GITLAB_ALLOWED_SELF_MANAGED_INSTANCES`, for example:
+
+```python
+GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = [
+    "https://gitlab.company.example",
+]
+```
+
+This allowlist controls GitLab SSO, registration, and account linking.
+
+New GitLab identities must provide an email and a non-null `confirmed_at`
+value. This requirement applies both when creating a Taiga user and when
+linking an existing Taiga account by email. Existing identities already linked
+through `AuthData` continue to authenticate without rechecking the email.
+
+For Self-Managed instances, `confirmed_at` means that the allowed GitLab
+instance considers the email confirmed. Taiga does not independently validate
+the email address.
 
 ### Taiga Front
 
