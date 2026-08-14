@@ -99,7 +99,8 @@ def test_get_user_profile_success():
         m_response.json.return_value = {"id": 1955,
                                         "username": "mmcfly",
                                         "name": "martin seamus mcfly",
-                                        "bio": "time traveler"}
+                                        "bio": "time traveler",
+                                        "confirmed_at": "2026-08-14T10:00:00Z"}
 
         user_profile = gitlab.get_user_profile(gitlab.HEADERS)
 
@@ -107,8 +108,23 @@ def test_get_user_profile_success():
         assert user_profile.username == "mmcfly"
         assert user_profile.full_name == "martin seamus mcfly"
         assert user_profile.bio == "time traveler"
+        assert user_profile.confirmed_at == "2026-08-14T10:00:00Z"
         m_requests.get.assert_called_once_with("http://localhost:4321/api/v4/user",
                                                headers=gitlab.HEADERS)
+
+
+def test_get_user_profile_without_confirmed_email():
+    with patch("taiga_contrib_gitlab_auth.connector.requests") as m_requests, \
+            patch("taiga_contrib_gitlab_auth.connector.URL", "http://localhost:4321"):
+        m_requests.get.return_value = m_response = Mock()
+        m_response.status_code = 200
+        m_response.json.return_value = {"id": 1955,
+                                        "username": "mmcfly",
+                                        "email": "mmcfly@bttf.com"}
+
+        user_profile = gitlab.get_user_profile(gitlab.HEADERS)
+
+        assert user_profile.confirmed_at is None
 
 
 def test_get_user_profile_whit_errors():
@@ -132,7 +148,8 @@ def test_me():
                                                       username="mmcfly",
                                                       full_name="martin seamus mcfly",
                                                       email="mmcfly@bttf.com",
-                                                      bio="time traveler")
+                                                      bio="time traveler",
+                                                      confirmed_at="2026-08-14T10:00:00Z")
         email, user = gitlab.me("**access-code**", "http://localhost:1234")
 
         assert email == "mmcfly@bttf.com"
@@ -140,6 +157,7 @@ def test_me():
         assert user.username == "mmcfly"
         assert user.full_name == "martin seamus mcfly"
         assert user.bio == "time traveler"
+        assert user.confirmed_at == "2026-08-14T10:00:00Z"
 
         headers = gitlab.HEADERS.copy()
         headers["Authorization"] = "Bearer xxxxxxxx"

@@ -44,7 +44,7 @@ API_RESOURCES_URLS = {
 HEADERS = {"Accept": "application/json",}
 
 AuthInfo = namedtuple("AuthInfo", ["access_token"])
-User = namedtuple("User", ["id", "username", "full_name", "bio", "email"])
+User = namedtuple("User", ["id", "username", "full_name", "bio", "email", "confirmed_at"])
 
 
 ######################################################
@@ -127,7 +127,8 @@ def get_user_profile(headers:dict=HEADERS):
                 username=data.get("username", None),
                 full_name=(data.get("name", None) or ""),
                 email=(data.get("email", None) or ""),
-                bio=(data.get("bio", None) or ""))
+                bio=(data.get("bio", None) or ""),
+                confirmed_at=data.get("confirmed_at", None))
 
 
 ######################################################
@@ -145,4 +146,3 @@ def me(access_code:str, redirectUri:str) -> tuple:
 
     user = get_user_profile(headers=headers)
     return user.email, user
-

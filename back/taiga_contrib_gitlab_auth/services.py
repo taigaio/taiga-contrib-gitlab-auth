@@ -42,7 +42,8 @@ def is_gitlab_instance_allowed(url: str = None) -> bool:
 
 
 @tx.atomic
-def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:str, token:str=None):
+def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:str,
+                    confirmed_at, token:str=None):
     """
     Register a new user from gitlab.
 
@@ -65,6 +66,12 @@ def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:s
         auth_data = auth_data_model.objects.get(key="gitlab", value=gitlab_id)
         user = auth_data.user
     except auth_data_model.DoesNotExist:
+        if not email or not confirmed_at:
+            raise AuthenticationFailed(
+                _("Unable to authenticate with GitLab."),
+                code="sso_authentication_failed",
+            )
+
         try:
             # Is a user with the same email as the gitlab user?
             user = user_model.objects.get(email=email)
@@ -112,6 +119,7 @@ def gitlab_login_func(request):
                            full_name=user_info.full_name,
                            gitlab_id=user_info.id,
                            bio=user_info.bio,
+                           confirmed_at=user_info.confirmed_at,
                            token=token)
     data = make_auth_response_data(user)
     return data

@@ -106,6 +106,15 @@ GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = [
 
 This allowlist controls GitLab SSO, registration, and account linking.
 
+New GitLab identities must provide an email and a non-null `confirmed_at`
+value. This requirement applies both when creating a Taiga user and when
+linking an existing Taiga account by email. Existing identities already linked
+through `AuthData` continue to authenticate without rechecking the email.
+
+For Self-Managed instances, `confirmed_at` means that the allowed GitLab
+instance considers the email confirmed. Taiga does not independently validate
+the email address.
+
 ### Taiga Front
 
 After clone the repo link `dist` in `taiga-front` plugins directory:

@@ -17,6 +17,8 @@ from taiga_contrib_gitlab_auth import connector as gitlab_connector
 
 pytestmark = pytest.mark.django_db
 
+GITLAB_EMAIL_CONFIRMED_AT = "2026-08-14T10:00:00Z"
+
 
 def test_response_200_in_registration_with_gitlab_account(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
@@ -31,7 +33,8 @@ def test_response_200_in_registration_with_gitlab_account(client, settings):
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 200
@@ -55,7 +58,8 @@ def test_response_200_in_registration_with_gitlab_account_and_existed_user_by_em
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 200
@@ -94,7 +98,8 @@ def test_response_401_in_registration_with_self_managed_gitlab_and_existed_user_
                                                    username="attacker",
                                                    full_name="attacker",
                                                    email="victim@example.com",
-                                                   bio=""))
+                                                   bio="",
+                                                   confirmed_at=None))
 
         response = client.post(reverse("auth-list"), form)
 
@@ -145,7 +150,8 @@ def test_response_200_in_registration_with_self_managed_gitlab_and_new_user(clie
                                                    username="new-user",
                                                    full_name="new user",
                                                    email="new-user@example.com",
-                                                   bio=""))
+                                                   bio="",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
 
@@ -167,13 +173,114 @@ def test_response_200_in_registration_with_allowed_self_managed_gitlab_and_exist
                                                    username="trusted-user",
                                                    full_name="trusted user",
                                                    email="victim@example.com",
-                                                   bio=""))
+                                                   bio="",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
 
     assert response.status_code == 200
     assert response.data["id"] == user.id
     assert user.auth_data.filter(key="gitlab", value="999").count() == 1
+
+
+def test_response_401_in_registration_with_new_gitlab_user_with_unconfirmed_email(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    form = {"type": "gitlab",
+            "code": "xxxxxx"}
+    user_model = apps.get_model("users", "User")
+    auth_data_model = apps.get_model("users", "AuthData")
+    user_count = user_model.objects.count()
+    auth_data_count = auth_data_model.objects.count()
+
+    with patch("taiga_contrib_gitlab_auth.connector.me") as m_me:
+        m_me.return_value = ("unconfirmed@example.com",
+                             gitlab_connector.User(id=999,
+                                                   username="unconfirmed-user",
+                                                   full_name="unconfirmed user",
+                                                   email="unconfirmed@example.com",
+                                                   bio="",
+                                                   confirmed_at=None))
+
+        response = client.post(reverse("auth-list"), form)
+
+    assert response.status_code == 401
+    assert response.data["detail"]["code"] == "sso_authentication_failed"
+    assert "auth_token" not in response.data
+    assert user_model.objects.count() == user_count
+    assert auth_data_model.objects.count() == auth_data_count
+
+
+def test_response_401_in_registration_with_new_gitlab_user_without_email(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    form = {"type": "gitlab",
+            "code": "xxxxxx"}
+    user_model = apps.get_model("users", "User")
+    auth_data_model = apps.get_model("users", "AuthData")
+    user_count = user_model.objects.count()
+    auth_data_count = auth_data_model.objects.count()
+
+    with patch("taiga_contrib_gitlab_auth.connector.me") as m_me:
+        m_me.return_value = ("",
+                             gitlab_connector.User(id=999,
+                                                   username="missing-email",
+                                                   full_name="missing email",
+                                                   email="",
+                                                   bio="",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
+
+        response = client.post(reverse("auth-list"), form)
+
+    assert response.status_code == 401
+    assert response.data["detail"]["code"] == "sso_authentication_failed"
+    assert "auth_token" not in response.data
+    assert user_model.objects.count() == user_count
+    assert auth_data_model.objects.count() == auth_data_count
+
+
+def test_unconfirmed_existing_email_has_no_side_effects(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    settings.GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = ["https://gitlab.example.com"]
+    membership_model = apps.get_model("projects", "Membership")
+    membership = factories.MembershipFactory(user=None)
+    user = factories.UserFactory.create(email="victim@example.com")
+    user_model = apps.get_model("users", "User")
+    auth_data_model = apps.get_model("users", "AuthData")
+    user_count = user_model.objects.count()
+    auth_data_count = auth_data_model.objects.count()
+    form = {"type": "gitlab",
+            "code": "xxxxxx",
+            "token": membership.token,
+            "invitation_token": membership.token}
+
+    with patch("taiga_contrib_gitlab_auth.connector.URL", "https://gitlab.example.com"), \
+            patch("taiga_contrib_gitlab_auth.connector.me") as m_me, \
+            patch("taiga_contrib_gitlab_auth.services.make_auth_response_data") as m_make_auth_response_data, \
+            patch("taiga_contrib_gitlab_auth.services.send_register_email") as m_send_register_email, \
+            patch("taiga_contrib_gitlab_auth.services.user_registered_signal.send") as m_user_registered, \
+            patch("taiga_contrib_gitlab_auth.services.get_membership_by_token") as m_get_membership_by_token, \
+            patch("taiga.auth.api.accept_invitation_by_existing_user") as m_accept_invitation:
+        m_me.return_value = ("victim@example.com",
+                             gitlab_connector.User(id=999,
+                                                   username="unconfirmed-user",
+                                                   full_name="unconfirmed user",
+                                                   email="victim@example.com",
+                                                   bio="",
+                                                   confirmed_at=None))
+
+        response = client.post(reverse("auth-list"), form)
+
+    assert response.status_code == 401
+    assert response.data["detail"]["code"] == "sso_authentication_failed"
+    assert "auth_token" not in response.data
+    assert user_model.objects.count() == user_count
+    assert auth_data_model.objects.count() == auth_data_count
+    assert user.auth_data.filter(key="gitlab", value="999").count() == 0
+    assert membership_model.objects.get(pk=membership.pk).user_id is None
+    m_make_auth_response_data.assert_not_called()
+    m_send_register_email.assert_not_called()
+    m_user_registered.assert_not_called()
+    m_get_membership_by_token.assert_not_called()
+    m_accept_invitation.assert_not_called()
 
 
 def test_response_200_in_registration_with_gitlab_account_and_existed_user_by_gitlab_id(client, settings):
@@ -191,7 +298,8 @@ def test_response_200_in_registration_with_gitlab_account_and_existed_user_by_gi
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=None))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 200
@@ -218,7 +326,8 @@ def test_response_200_in_registration_with_gitlab_account_and_change_gitlab_user
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 200
@@ -244,7 +353,8 @@ def test_response_200_in_registration_with_gitlab_account_in_a_project(client, s
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 200
@@ -263,7 +373,8 @@ def test_response_404_in_registration_with_gitlab_in_a_project_with_invalid_toke
                                                    username="mmcfly",
                                                    full_name="martin seamus mcfly",
                                                    email="mmcfly@bttf.com",
-                                                   bio="time traveler"))
+                                                   bio="time traveler",
+                                                   confirmed_at=GITLAB_EMAIL_CONFIRMED_AT))
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 404
