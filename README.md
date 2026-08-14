@@ -37,6 +37,8 @@ Modify your `settings/config.py` and include the line:
   GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
+  # GitLab SaaS is always allowed. Self-Managed instances require explicit opt-in.
+  GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = []
 ```
 
 **Tip** the callback url in the Gitlab configuration should be the same as the `{TAIGA_URL}/login` environment variable.
@@ -88,8 +90,21 @@ Modify `taiga-back/settings/local.py` and include the line:
   GITLAB_API_CLIENT_ID = "YOUR-GITLAB-CLIENT-ID"
   GITLAB_API_CLIENT_SECRET = "YOUR-GITLAB-CLIENT-SECRET"
   GITLAB_URL="YOUR-GITLAB-URL"
+  GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = []
 
 ```
+
+GitLab SaaS (`https://gitlab.com`) is always allowed. Self-Managed GitLab
+instances are rejected unless explicitly included in
+`GITLAB_ALLOWED_SELF_MANAGED_INSTANCES`, for example:
+
+```python
+GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = [
+    "https://gitlab.company.example",
+]
+```
+
+This allowlist controls GitLab SSO, registration, and account linking.
 
 ### Taiga Front
 

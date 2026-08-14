@@ -7,17 +7,38 @@
 
 from django.db import transaction as tx
 from django.db import IntegrityError
+from django.conf import settings
 from django.utils.translation import gettext as _
 
 from django.apps import apps
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base import exceptions as exc
+from taiga.auth.exceptions import AuthenticationFailed
 from taiga.auth.services import send_register_email
 from taiga.auth.services import make_auth_response_data, get_membership_by_token
 from taiga.auth.signals import user_registered as user_registered_signal
 
 from . import connector
+
+
+GITLAB_SAAS_URL = "https://gitlab.com"
+
+
+def _normalize_gitlab_url(url: str) -> str:
+    return (url or "").rstrip("/")
+
+
+def is_gitlab_instance_allowed(url: str = None) -> bool:
+    """Return whether the configured GitLab instance may use this plugin."""
+    configured_url = _normalize_gitlab_url(url if url is not None else connector.URL)
+    if configured_url == GITLAB_SAAS_URL:
+        return True
+
+    allowed_instances = getattr(settings, "GITLAB_ALLOWED_SELF_MANAGED_INSTANCES", [])
+    return configured_url in {
+        _normalize_gitlab_url(instance) for instance in allowed_instances
+    }
 
 
 @tx.atomic
@@ -30,6 +51,12 @@ def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:s
 
     :returns: User
     """
+    if not is_gitlab_instance_allowed():
+        raise AuthenticationFailed(
+            _("Unable to authenticate with GitLab."),
+            code="sso_authentication_failed",
+        )
+
     auth_data_model = apps.get_model("users", "AuthData")
     user_model = apps.get_model("users", "User")
 
@@ -41,6 +68,7 @@ def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:s
         try:
             # Is a user with the same email as the gitlab user?
             user = user_model.objects.get(email=email)
+
             auth_data_model.objects.create(user=user, key="gitlab", value=gitlab_id, extra={})
         except user_model.DoesNotExist:
             # Create a new user
@@ -67,6 +95,12 @@ def gitlab_register(username:str, email:str, full_name:str, gitlab_id:int, bio:s
 
 
 def gitlab_login_func(request):
+    if not is_gitlab_instance_allowed():
+        raise AuthenticationFailed(
+            _("Unable to authenticate with GitLab."),
+            code="sso_authentication_failed",
+        )
+
     code = request.DATA.get('code', None)
     token = request.DATA.get('token', None)
     redirectUri = request.DATA.get('redirectUri', None)

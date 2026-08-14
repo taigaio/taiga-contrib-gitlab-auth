@@ -9,6 +9,25 @@ import pytest
 
 from unittest.mock import patch, Mock
 from taiga_contrib_gitlab_auth import connector as gitlab
+from taiga_contrib_gitlab_auth import services
+
+
+@pytest.mark.parametrize(
+    "url, allowed_instances, expected",
+    [
+        ("https://gitlab.com", [], True),
+        ("https://gitlab.com/", [], True),
+        ("https://gitlab.example.com", [], False),
+        ("https://gitlab.example.com", ["https://gitlab.example.com"], True),
+        ("https://gitlab.example.com", ["https://gitlab.example.com/"], True),
+        ("https://other.example.com", ["https://gitlab.example.com"], False),
+    ],
+)
+def test_is_gitlab_instance_allowed(settings, url, allowed_instances, expected):
+    settings.GITLAB_ALLOWED_SELF_MANAGED_INSTANCES = allowed_instances
+
+    with patch("taiga_contrib_gitlab_auth.connector.URL", url):
+        assert services.is_gitlab_instance_allowed() is expected
 
 
 def test_url_builder():
